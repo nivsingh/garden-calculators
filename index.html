@@ -1177,37 +1177,54 @@
   // Language toggle
   var langBtn = document.getElementById('lang-toggle');
   function setLang(lang){
-    $all('[data-en]').forEach(function(el){
-      var en = el.getAttribute('data-en');
-      var es = el.getAttribute('data-es') || en;
-      if(el.tagName === 'OPTION'){
-        el.textContent = lang === 'es' ? es : en;
-      } else {
-        el.textContent = lang === 'es' ? es : en;
-      }
-    });
-    if(langBtn){
-      langBtn.textContent = lang === 'es' ? 'English' : 'Español';
-      langBtn.setAttribute('data-lang', lang);
-    }
-    // Paint coverage label units
-    var pu = document.getElementById('paint-units');
-    var covLbl = document.getElementById('coverage-label');
-    if(pu && covLbl){
-      if(pu.value === 'm'){
-        text(covLbl, lang === 'es' ? 'sq m por litro' : 'sq m per liter');
-      } else {
-        text(covLbl, lang === 'es' ? 'sq ft por galón' : 'sq ft per gallon');
-      }
-    }
-  }
-  if(langBtn){
-    on(langBtn,'click', function(){
-      var cur = langBtn.getAttribute('data-lang') || 'en';
-      setLang(cur === 'en' ? 'es' : 'en');
-    });
-    setLang('en');
-  }
+$all('[data-en]').forEach(function(el){
+var en = el.getAttribute('data-en');
+var es = el.getAttribute('data-es') || en;
+el.textContent = lang === 'es' ? es : en;
+});
+
+
+if(langBtn){
+langBtn.textContent = lang === 'es' ? 'English' : 'Español';
+langBtn.setAttribute('data-lang', lang);
+}
+
+
+// Automatically switch units with language
+var paintUnits = document.getElementById('paint-units');
+var mulchUnits = document.getElementById('mulch-units');
+var depthUnit = document.getElementById('depth-unit');
+
+
+if(lang === 'es'){
+if(paintUnits) paintUnits.value = 'm';
+if(mulchUnits) mulchUnits.value = 'metric';
+if(depthUnit) depthUnit.value = 'cm';
+} else {
+if(paintUnits) paintUnits.value = 'ft';
+if(mulchUnits) mulchUnits.value = 'imperial';
+if(depthUnit) depthUnit.value = 'in';
+}
+
+
+// Update coverage label text
+var covLbl = document.getElementById('coverage-label');
+if(paintUnits && covLbl){
+if(paintUnits.value === 'm'){
+text(covLbl, lang === 'es' ? 'sq m por litro' : 'sq m per liter');
+} else {
+text(covLbl, lang === 'es' ? 'sq ft por galón' : 'sq ft per gallon');
+}
+}
+}
+
+
+if(langBtn){
+langBtn.addEventListener('click', function(){
+var current = langBtn.getAttribute('data-lang');
+setLang(current === 'es' ? 'en' : 'es');
+});
+}
 
   // Tabs, click and touch support
   var sections = $all('.section');
